@@ -32,20 +32,15 @@
 //all(label, not_decendant(all(RCTText, with-label))
 
 + (id<GREYMatcher>)detox_matcherForAccessibilityLabel:(NSString *)label {
-	if (![ReactNativeSupport isReactNativeApp])
-	{
-		return  [self matcherForAccessibilityLabel:label];
-	}
-	else
-	{
-		Class RCTTextViewClass = NSClassFromString(@"RCTText") ?: NSClassFromString(@"RCTTextView");
-		return grey_allOf(grey_accessibilityLabel(label),
-						  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RCTTextViewClass),
-															  grey_accessibilityLabel(label),
-															  nil))),
-						  nil);
-	}
-	
+	Class RCTTextViewClass = NSClassFromString(@"RCTText") ?: NSClassFromString(@"RCTTextView");
+	id<GREYMatcher> reactViewMatcher = grey_allOf(grey_accessibilityLabel(label),
+												  grey_not(grey_descendant(grey_allOf(grey_kindOfClass(RCTTextViewClass),
+																					  grey_accessibilityLabel(label),
+																					  nil))),
+												  nil);
+	return grey_anyOf([self matcherForAccessibilityLabel:label],
+					  reactViewMatcher,
+					  nil);
 }
 
 id<GREYMatcher> detox_grey_parent(id<GREYMatcher> ancestorMatcher)
