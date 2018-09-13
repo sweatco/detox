@@ -15,6 +15,7 @@ const DetoxServer = require('./server/DetoxServer');
 const URL = require('url').URL;
 const ArtifactsManager = require('./artifacts/ArtifactsManager');
 const AsyncEmitter = require('./utils/AsyncEmitter');
+const FixtureManager = require('./fixtures/ios/FixtureManager');
 
 const DEVICE_CLASSES = {
   'ios.simulator': SimulatorDriver,
@@ -30,6 +31,7 @@ class Detox {
     this.client = null;
     this.device = null;
     this.artifactsManager = new ArtifactsManager();
+    this.fixtureManager = new FixtureManager(deviceConfig.fixtures);
   }
 
   async init(userParams) {
@@ -61,6 +63,7 @@ class Detox {
 
     this.artifactsManager.subscribeToDeviceEvents(deviceDriver);
     this.artifactsManager.registerArtifactPlugins(deviceDriver.declareArtifactPlugins());
+    this.fixtureManager.subscribeToDeviceEvents(deviceDriver);
 
     this.device = new Device({
       deviceConfig: this.deviceConfig,
