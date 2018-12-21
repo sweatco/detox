@@ -110,6 +110,13 @@ class ScrollAmountAction extends Action {
   }
 }
 
+class ScrollAmountStartAction extends Action {
+  constructor(direction, amount, xOriginStartPercentage, yOriginStartPercentage) {
+    super();
+    this._call = invoke.callDirectly(GreyActions.actionForScrollInDirectionAmountXOriginStartPercentageYOriginStartPercentage(direction, amount, xOriginStartPercentage, yOriginStartPercentage));
+  }
+}
+
 class ScrollEdgeAction extends Action {
   constructor(edge) {
     super();
@@ -297,6 +304,11 @@ class Element {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
     this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
     return await new ActionInteraction(this, new ScrollAmountAction(direction, amount)).execute();
+  }
+  async scrollFrom(amount, direction = 'down', xOriginStartPercentage, yOriginStartPercentage) {
+    // override the user's element selection with an extended matcher that looks for UIScrollView children
+    this._selectElementWithMatcher(this._originalMatcher._extendToDescendantScrollViews());
+    return await new ActionInteraction(this, new ScrollAmountStartAction(direction, amount, xOriginStartPercentage, yOriginStartPercentage)).execute();
   }
   async scrollTo(edge) {
     // override the user's element selection with an extended matcher that looks for UIScrollView children
