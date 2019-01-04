@@ -256,6 +256,12 @@ class WaitForActionInteraction extends Interaction {
     this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
     await this._execute(new ScrollAmountAction(direction, amount));
   }
+
+  async scrollFrom(amount, direction = 'down', xOriginStartPercentage, yOriginStartPercentage) {
+    // override the user's element selection with an extended matcher that looks for UIScrollView children
+    this._searchMatcher = this._searchMatcher._extendToDescendantScrollViews();
+    await this._execute(new ScrollAmountStartAction(direction, amount, xOriginStartPercentage, yOriginStartPercentage));
+  }
 }
 
 class Element {
