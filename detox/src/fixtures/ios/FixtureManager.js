@@ -48,7 +48,7 @@ class FixtureManager {
       if (fs.existsSync(fullFixtureFilePath)) {
         const destinationPath = path.join(latestChangedDirectoryPath, 'Documents', path.basename(fixtureFilePath));
         log.debug({ event: 'FIXTURE_COPY' }, `copying ${fullFixtureFilePath} to ${destinationPath}`);
-        fs.createReadStream(fullFixtureFilePath).pipe(fs.createWriteStream(destinationPath));
+        fs.copyFileSync(fullFixtureFilePath, destinationPath)
       } else {
         log.error({ event: 'FIXTURE_COPY' }, `fixture file ${fixtureFilePath} does not exist, skipping`);
       }
