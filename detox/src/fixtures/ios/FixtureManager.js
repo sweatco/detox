@@ -35,7 +35,7 @@ class FixtureManager {
           latestChangedDirectoryModifiedAt = stats.mtime;
         }
       }
-    })
+    });
 
     log.debug({ event: 'APP_DIRECTORY_SEARCH' }, `latest changed directory is ${latestChangedDirectoryPath}`);
 
@@ -43,16 +43,23 @@ class FixtureManager {
       return;
     }
 
-    this.fixtures.forEach(function(fixtureFilePath) {
-      const fullFixtureFilePath = path.resolve(fixtureFilePath);
+    this.fixtures.forEach(function(fixtureConfig) {
+      const { filePath, destinationDir } = fixtureConfig;
+      const validDestinationDir = destinationDir ? destinationDir : '';
+      const fullFixtureFilePath = path.resolve(filePath);
       if (fs.existsSync(fullFixtureFilePath)) {
-        const destinationPath = path.join(latestChangedDirectoryPath, 'Documents', path.basename(fixtureFilePath));
+        const destinationDirPath = path.join(latestChangedDirectoryPath, 'Documents', validDestinationDir);
+        if (!fs.existsSync(destinationDirPath)) {
+          fs.mkdirSync(destinationDirPath, { recursive: true });
+        }
+
+        const destinationPath = path.join(destinationDirPath, path.basename(filePath));
         log.debug({ event: 'FIXTURE_COPY' }, `copying ${fullFixtureFilePath} to ${destinationPath}`);
-        fs.copyFileSync(fullFixtureFilePath, destinationPath)
+        fs.copyFileSync(fullFixtureFilePath, destinationPath);
       } else {
-        log.error({ event: 'FIXTURE_COPY' }, `fixture file ${fixtureFilePath} does not exist, skipping`);
+        log.error({ event: 'FIXTURE_COPY' }, `fixture file ${filePath} does not exist, skipping`);
       }
-    })
+    });
 
     log.debug({ event: 'FIXTURE_COPY' }, 'done');
   }
